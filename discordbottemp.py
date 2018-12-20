@@ -6,12 +6,21 @@ import asyncio
 import json
 import re
 
+"""
+Use your own bot tokens etc,
+prefix for bot commands is "?"
+"""
 BOT_PREFIX = ("?")
 #BOT TOKEN
 TOKEN = "###########PLACEHOLDER###########"
 
 client = Bot(command_prefix = BOT_PREFIX)
 
+
+"""
+eight_ball:
+returns a random answer to a question chosen from a predefined list of answers
+"""
 @client.command(name='8ball',
 				description='Answers a yes/no question, 8ball style',
 				brief = 'Answers a question',
@@ -26,16 +35,29 @@ async def eight_ball(context):
 	'For sure!']
 	await client.say(random.choice(possible_responses) + ", " + context.message.author.mention)
 
+"""
+square:
+first testing function, returns square of 'number'
+:param number:
+:type number: int
+"""
 @client.command()
 async def square(number):
 	squared_value = int(number) * int(number)
 	await client.say(str(number)+" squared is " + str(squared_value))
-
+"""
+on_ready
+event function, when ready, logged in, changes its 'Playing' field with 'with fire'
+"""
 @client.event
 async def on_ready():
 	await client.change_presence(game=Game(name="with fire"))
 	print("Logged in as " + client.user.name)
 
+"""
+bitcoin
+returns the current price of 1btc in Euros using the coindesk api
+"""
 @client.command()
 async def bitcoin():
 	url = 'https://api.coindesk.com/v1/bpi/currentprice.json'
@@ -43,6 +65,10 @@ async def bitcoin():
 	value = response.json()['bpi']['EUR']['rate']
 	await client.say("Current bitcoin price: " + value + "€")
 
+"""
+fortune
+returns a random choice of a fortune cookie saying from the json file fortune.json
+"""
 @client.command(name='fortune',
 				description='Get your fortune cookie and lucky number',
 				brief='Fortune Cookie!',
@@ -59,6 +85,14 @@ async def fortunecookie(context):
 		" your fortune cookie reads: " +
 		choice)
 
+"""
+weather
+returns a simple description and current temperature in Celsius of the current weather in the specified city
+using the openweathermap api
+:param city:
+:type string:
+TODO: make the input from the user more lax
+"""
 @client.command(name='weather',
 				description='weather city,countrycode, example: ?weather Athens,gr gets the current weather in athens',
 				brief='get the current weather at your chosen city',
@@ -78,6 +112,14 @@ async def weather(city):
 		temp = r.json()['main']['temp']
 		await client.say("Weather in "+city+ ": "+ weatherdisc + ", temp: " + str(temp) +"oC")
 
+"""
+remindme
+reminds the user of a defined task in X minutes defined by the user
+:param task:
+:type string:
+:param minutes:
+:type int:
+"""
 @client.command(name='remindme',
 				description='usage: ?remindme "task" minutes will remind you of the task in <minutes> minutes',
 				brief='Reminds you of a task in defined minutes',
@@ -97,6 +139,12 @@ async def remindme(context, task, minutes):
 		await client.say(context.message.author.mention + " Time to: " + task)
 
 #HLIAS
+"""
+roll
+rolls xdy dice
+:param dice:
+:type string (xdy where x,y integers):
+"""
 @client.command(name='roll',
                 description='Rolls one or more random dice in XdY(dW) format',
                 brief = 'Rolls random die',
@@ -118,7 +166,10 @@ async def roll(context, dice):
         await client.say("Give me dice in XdY format")
 #/HLIAS
 
-
+"""
+list_servers
+background task, prints on running terminal the current servers the bot is logged in
+"""
 async def list_servers():
 	await client.wait_until_ready()
 	while not client.is_closed:
